@@ -18,11 +18,12 @@ connection.connect(function (err) {
 
 // First function called to list all products and format layout of displayed items using client table function
 
-var getProdInf = function() {
+var getProdInf = function(func) {
     var table = new Table({
         head: ['Item_id', 'Product Name', 'Department Name', 'Price', 'Stock Quantity'],
         colWidths: [5, 50, 30, 10, 20]
     });
+
     connection.query("SELECT item_id,product_name,department_name, price,stock_quantity FROM products", function (err, res) {
         if (err) throw err;
         res.forEach(function (element) {
@@ -33,14 +34,13 @@ var getProdInf = function() {
             //  console.log(element.item_id, ' ',  element.product_name,' ' , element.department_name, ' ', element.price, ' ', element.stock_quantity );
         });
         console.log(table.toString());
-        //actionToPerform();
+        func();
+
+        
     })
 }
 
-getProdInf.prototype.actionToPerform = function(){
-    actionToPerform();
-   }
-
+// Show the Selection prompts for Manager Options
 function actionToPerform() {
 
     inquirer.prompt([
@@ -54,26 +54,27 @@ function actionToPerform() {
     ]).then(function (answer) {
         switch (answer.managerAction) {
             case "View all Products for Sale":
-               var productInfo = new getProdInf();
-               console.log("\n");
-               productInfo.actionToPerform();
+                getProdInf(actionToPerform);
                 break;
 
             case "View Low Inventory":
                 viewLowInventory();
                 break;
             case 'Add to Inventory':
-                addToInventory();
+                getProdInf(addToInventory);
                 break;
             case 'Add New Product':
+                addNewProduct();
                 break;
             case 'Quit':
                 connection.end();
+                break;
         }
     });
 
 }
 
+// Give the user list of items that are near depleted i.e the inventory is 1 or 0
 function viewLowInventory() {
     var table = new Table({
         head: ['Item_id', 'Product Name', 'Department Name', 'Price', 'Stock Quantity'],
@@ -94,7 +95,6 @@ function viewLowInventory() {
 }
 
 function addToInventory() {
-    var productInfo = new getProdInf();
     inquirer.prompt([
         {
             name: 'Item_id',
@@ -110,7 +110,69 @@ function addToInventory() {
     ]).then(function (answer) {
         connection.query("Update products set stock_quantity = (stock_quantity +" + parseInt(answer.addQuantity) + ") where item_id=" + answer.Item_id, function (err, res) {
             if (err) throw err;
-            productInfo.actionToPerform();
+            actionToPerform();
         });
     });
+}
+// function getDepartments() {
+//     var myChoices = [];
+//     connection.query("SELECT department_name FROM departments", function (err, res) {
+//         if (err) throw err;
+//         res.forEach(function (element) {
+//             myChoices.push(
+//                 element.department_name
+//             );
+//             console.log(element.department_name);
+//         });
+//         console.log(myChoices);
+//         return myChoices;
+           
+// });
+// }
+
+function addNewProduct() {
+   
+    var choices = [];
+    connection.query("SELECT department_name FROM departments", function (err, res) {
+        if (err) throw err;
+        res.forEach(function (element) {
+            choices.push(
+                element.department_name
+            );
+            //console.log(element.department_name);
+        });
+
+    
+
+    inquirer.prompt([
+        {
+            name: 'productName',
+            type: 'Input',
+            message: "\n What is the Name of the product you will like to add? ",
+        },
+        {
+            name: 'prodDepartment',
+            type: 'list',
+            message: "Which department does this product fall under?",
+            choices: choices
+        },
+        {
+            name: 'productPrice',
+            type: 'Input',
+            message: "\n How much does the item cost? ",
+        },
+        {
+            name: 'productQty',
+            type: 'Input',
+            message: "\n How many of the item do we have? ",
+        },
+
+    ]).then(function (answer) {
+            name: 'productName',
+        connection.query("insert into products(product_name,department_name,price,stock_quantity) values('" + answer.productName +"', '" + answer.prodDepartment + "'," + parseFloat(answer.productPrice,6,2) + ','+ parseInt(answer.productQty) + ")" , function (err, res) {
+            if (err) throw err;
+            actionToPerform();
+        });
+    });
+});    
 }
