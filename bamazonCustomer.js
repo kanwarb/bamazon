@@ -62,6 +62,7 @@ function buyProduct(response) {
                     console.log(element.item_id, answer.Item_id);
                     connection.query("Update products set stock_quantity =" + element.stock_quantity + "-" + parseInt(answer.Quantity) + " where item_id=" + parseInt(answer.Item_id), function (err, res) {
                     if (err) throw err;
+                    console.log("You Purchase "+ parseInt(answer.Quantity) + " " + element.product_name + " for $" + (parseInt(answer.Quantity)* parseFloat(element.price)));
                     getProductInfo();
                 });
             
