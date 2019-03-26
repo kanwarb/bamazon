@@ -33,7 +33,41 @@ function getProductInfo() {
             //  console.log(element.item_id, ' ',  element.product_name,' ' , element.department_name, ' ', element.price, ' ', element.stock_quantity );
         });
         console.log(table.toString());
-        buyProduct
-        
+        buyProduct(res);
+
     })
+}
+
+function buyProduct(response) {
+    inquirer.prompt([
+        {
+            name: 'Item_id',
+            type: 'Input',
+            message: "What is the ID of the item you would like to purchase"
+        },
+        {
+            name: 'Quantity',
+            type: 'Input',
+            message: "How many would you like to buy"
+        }
+
+    ]).then(function (answer) {
+        response.forEach(function(element){
+            if(parseInt(element.item_id) === parseInt(answer.Item_id)){
+                if(element.stock_quantity >= parseInt(answer.Quantity)){
+                    console.log(element.item_id, answer.Item_id);
+                    connection.query("Update products set stock_quantity =" + element.stock_quantity + "-" + parseInt(answer.Quantity) + " where item_id=" + parseInt(answer.Item_id), function (err, res) {
+                    if (err) throw err;
+                    getProductInfo();
+                });
+            
+              }
+            else{
+                console.log("Insufficient Quantity");
+                getProductInfo();
+            }
+          }
+       });
+      
+    });
 }
