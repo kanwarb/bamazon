@@ -11,6 +11,7 @@ product_name varchar(100),
 department_name varchar(100),
 price FLOAT(6,2),
 stock_quantity INTEGER(10),
+product_sales FLOAT(6,2),
 PRIMARY KEY (ITEM_ID)
 
 );
