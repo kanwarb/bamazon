@@ -39,20 +39,30 @@
         -  Bash
         -  3rd Party NPM Packages (inquirer, table-cli-2, mysql )
          
-### Examples of commands in action
+## Examples of commands in action
 
+### Customer View  Show all Items for Sale
 ![Customer View Items ](images/bamazonCustomer1.PNG)
+
+### Select Item by ID and quantity to purchase
 
 ![Customer Purchase Item](images/bamazonCustomer2.PNG)
 
-### Manager View 
+### Manager View , Initial View of Options
 ![Manager View Initial List](images/bamazonManager-1.PNG)
 
+### View all products for Sale
 ![View all products for Sale](images/bamazonManager-2.PNG)
+
+### View Items with low Inventory
 
 ![View Low Inventory](images/bamazonManager-3.PNG)
 
+### Add Inventory for a product
+
 ![Add to Inventory](images/bamazonManager-4.PNG)
+
+### Add New Product to the Store
 
 ![Add New Product -1](images/bamazonManager-5.PNG)
 ![Add New Product -2 ](images/bamazonManager-6.PNG)
